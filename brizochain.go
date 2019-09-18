@@ -24,7 +24,7 @@ type brizoChain struct {
 	contractInstance *BrizoContract.Brizo
 }
 
-// NewBrizoChain returns a instance if brizoChain(factory)
+// NewBrizoChain returns a instance of brizoChain (factory)
 func NewBrizoChain() (*brizoChain, error) {
 	rpcDial, err := rpc.Dial(rpcUrl)
 	if err != nil {
