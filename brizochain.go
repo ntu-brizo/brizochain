@@ -1,7 +1,7 @@
 package brizochain
 
 import (
-	BrizoContract "brizochain/contract"
+	BrizoContract "github.com/ntu-brizo/brizochain/contract"
 	"context"
 	"errors"
 	"math/big"
