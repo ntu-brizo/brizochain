@@ -29,7 +29,7 @@ contract Brizo {
     }
 
     function readDataFromHashDict(string hashKey) public view returns (string memory) {
-        require(bytes(hashDict[hashKey]).length > 0, "No data was written using this hash key!");
+        //require(bytes(hashDict[hashKey]).length > 0, "No data was written using this hash key!");
         return (hashDict[hashKey]);
     }
 }
