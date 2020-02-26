@@ -48,7 +48,7 @@ func NewBrizoChain() (*brizoChain, error) {
 	return &brizoChain{client: client, txSigner: signer, contractInstance: contract}, nil
 }
 
-// Write func writes a data to Brizo Chain and return error if error occurs.
+// Write func writes content to Brizo Chain and returns error if error occurs.
 func (brizo *brizoChain) Write(msg string) error {
 	tx, err := brizo.contractInstance.WriteData(brizo.txSigner, msg)
 	if err != nil {
@@ -63,6 +63,7 @@ func (brizo *brizoChain) Write(msg string) error {
 	return nil
 }
 
+// WriteByHashKey func write content to Brizo Chain with a key and returns error if error occurs.
 func (brizo *brizoChain) WriteByHashKey(key string, content string) error {
 	tx, err := brizo.contractInstance.WriteDataToHashDict(brizo.txSigner, key, content)
 	if err != nil {
