@@ -18,7 +18,7 @@ import (
 
 // TODO: make config more flexible
 const rpcUrl = "http://140.112.18.197:8051"
-const contractAddr = "0x5b057384Cfa49A2d09534E7E698736F3ee05ac0b"
+const contractAddr = "0xFce98B78cfF8884f3dd61bE4653A3f409a44931f"
 const privKey = "63c9dbad87b6b367c0a16eb1d928b68d5a1ae9d993ab81b2b7d665d6fad127b9"
 
 type brizoChain struct {
