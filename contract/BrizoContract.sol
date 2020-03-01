@@ -1,8 +1,9 @@
 pragma solidity 0.4.26;
+pragma experimental ABIEncoderV2;
 
 contract Brizo {
     mapping(address => string[]) storedData;
-    mapping(string => string) hashDict;
+    mapping(string => string[]) hashDict;
     uint256 dataCounter = 0;
 
     function getCounter() public view returns (uint256) {
@@ -10,7 +11,7 @@ contract Brizo {
     }
 
     function writeData(string memory content) public {
-        require(bytes(content).length > 0, "The content of data is empty!");
+        require(bytes(content).length > 0, "Content is empty!");
         storedData[msg.sender].push(content);
         dataCounter += 1;
     }
@@ -22,14 +23,13 @@ contract Brizo {
     }
 
     function writeDataToHashDict(string memory hashKey, string memory content) public {
-        require(bytes(hashKey).length > 0, "No hash key specified!");
         require(bytes(content).length > 0, "Content is empty!");
-        hashDict[hashKey] = content;
+        hashDict[hashKey].push(content);
         dataCounter += 1;
     }
 
-    function readDataFromHashDict(string hashKey) public view returns (string memory) {
-        //require(bytes(hashDict[hashKey]).length > 0, "No data was written using this hash key!");
+    function readDataFromHashDict(string hashKey) public view returns (string[] memory) {
+        require(hashDict[hashKey].length > 0, "No data was written using this hash key!");
         return (hashDict[hashKey]);
     }
 }
