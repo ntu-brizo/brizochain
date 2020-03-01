@@ -1,10 +1,13 @@
 package brizochain
 
 import (
-	BrizoContract "github.com/ntu-brizo/brizochain/contract"
 	"context"
 	"errors"
+	"fmt"
 	"math/big"
+	"strings"
+
+	BrizoContract "github.com/ntu-brizo/brizochain/contract"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,7 +18,7 @@ import (
 
 // TODO: make config more flexible
 const rpcUrl = "http://140.112.18.197:8051"
-const contractAddr = "0xCD9f2e0f53E9D110BF1b9Fd9738ABe1e4C1AEf27"
+const contractAddr = "0x5b057384Cfa49A2d09534E7E698736F3ee05ac0b"
 const privKey = "63c9dbad87b6b367c0a16eb1d928b68d5a1ae9d993ab81b2b7d665d6fad127b9"
 
 type brizoChain struct {
@@ -65,14 +68,32 @@ func (brizo *brizoChain) Write(msg string) error {
 
 // WriteByHashKey func write content to Brizo Chain with a key and returns error if error occurs.
 func (brizo *brizoChain) WriteByHashKey(key string, content string) error {
-	tx, err := brizo.contractInstance.WriteDataToHashDict(brizo.txSigner, key, content)
-	if err != nil {
-		return errors.New("Failed to broadcast transaction to Brizo Chain.")
-	}
+	//contentSliceArray := []string{}
+	const SLICE_EVERY_N = 50
+	for i := 0; i <= len(content)/SLICE_EVERY_N; i++ {
+		if i == len(content)/SLICE_EVERY_N {
+			tx, err := brizo.contractInstance.WriteDataToHashDict(brizo.txSigner, key, content[SLICE_EVERY_N*i:len(content)])
+			fmt.Println(content[SLICE_EVERY_N*i : len(content)])
+			if err != nil {
+				return errors.New("Failed to broadcast transaction to Brizo Chain.")
+			}
 
-	_, err = bind.WaitMined(context.Background(), brizo.client, tx)
-	if err != nil {
-		return errors.New("Transaction mining error.")
+			_, err = bind.WaitMined(context.Background(), brizo.client, tx)
+			if err != nil {
+				return errors.New("Transaction mining error.")
+			}
+		} else {
+			tx, err := brizo.contractInstance.WriteDataToHashDict(brizo.txSigner, key, content[SLICE_EVERY_N*i:SLICE_EVERY_N*(i+1)])
+			fmt.Println(content[SLICE_EVERY_N*i : SLICE_EVERY_N*(i+1)])
+			if err != nil {
+				return errors.New("Failed to broadcast transaction to Brizo Chain.")
+			}
+
+			_, err = bind.WaitMined(context.Background(), brizo.client, tx)
+			if err != nil {
+				return errors.New("Transaction mining error.")
+			}
+		}
 	}
 
 	return nil
@@ -98,5 +119,6 @@ func (brizo *brizoChain) ReadByHexAddress(hexAddress string, index int64) (strin
 }
 
 func (brizo *brizoChain) ReadDataFromHashDict(key string) (string, error) {
-	return brizo.contractInstance.ReadDataFromHashDict(&bind.CallOpts{}, key)
+	content, err := brizo.contractInstance.ReadDataFromHashDict(&bind.CallOpts{}, key)
+	return strings.Join(content, ""), err
 }
